@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -41,11 +40,12 @@ import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
-import cn.android.ocr.Predictor;
-import cn.android.ocr.Utils;
+import com.android.ocr.Predictor;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -287,7 +287,12 @@ public class MainActivity extends AppCompatActivity {
         if (outputImage != null) {
             ivInputImage.setImageBitmap(outputImage);
         }
-        tvOutputResult.setText(predictor.outputResult());
+        Toast.makeText(this,predictor.outputResult(),Toast.LENGTH_LONG).show();
+        Log.d(TAG, "onRunModelSuccessed: "+ Arrays.toString(predictor.outputResult().getBytes(StandardCharsets.UTF_8)));
+
+        tvOutputResult.setText(Integer.valueOf(predictor.outputResult().length()).toString());
+
+        Log.d(TAG, "onRunModelSuccessed: "+predictor.outputResult());
         tvOutputResult.scrollTo(0, 0);
     }
 

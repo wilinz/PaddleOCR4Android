@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.IOException;
 import java.io.InputStream;
 
-import cn.android.ocr.Predictor;
+import com.android.ocr.Predictor;
 
 public class MiniActivity extends AppCompatActivity {
 

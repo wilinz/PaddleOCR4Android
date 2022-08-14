@@ -1,4 +1,5 @@
-package cn.android.ocr;
+
+package com.baidu.paddle.lite.demo.ocr;
 
 import static android.graphics.Color.blue;
 import static android.graphics.Color.green;
@@ -27,7 +28,7 @@ import java.util.Vector;
 
 public class Predictor {
     private static final String TAG = Predictor.class.getSimpleName();
-    public boolean modelLoaded = false;
+    public boolean isLoaded = false;
     public boolean useSlim = true;
     protected OCRPredictorNative mPaddlePredictorNative;
     public int warmupIterNum = 1;
@@ -58,13 +59,29 @@ public class Predictor {
     }
 
     public boolean init(Context appCtx, String modelPath, String labelPath) {
-        if (!modelLoaded) {
+        if (!isLoaded) {
             loadModel(appCtx, modelPath, cpuThreadNum, cpuPowerMode);
             loadLabel(appCtx, labelPath);
-            modelLoaded = true;
+            isLoaded = true;
         }
-        Log.i(TAG, "PaddleOCR modelLoaded: " + modelLoaded);
-        return modelLoaded;
+        Log.i(TAG, "PaddleOCR modelLoaded: " + isLoaded);
+        return isLoaded;
+    }
+
+    public boolean init(Context appCtx, boolean useSlim) {
+        if (!this.isLoaded || this.useSlim != useSlim) {
+            this.loadLabel(appCtx, "labels/ppocr_keys_v1.txt");
+            if (useSlim) {
+                this.loadModel(appCtx, "models/ocr_v2_for_cpu(slim)", 4, "LITE_POWER_HIGH");
+            } else {
+                this.loadModel(appCtx, "models/ocr_v2_for_cpu", 4, "LITE_POWER_HIGH");
+            }
+        }
+
+        this.isLoaded = true;
+        this.useSlim = useSlim;
+        Log.i(TAG, "isLoaded: " + this.isLoaded);
+        return this.isLoaded;
     }
 
     public boolean init(Context appCtx, String modelPath, String labelPath, int cpuThreadNum, String cpuPowerMode,
@@ -149,13 +166,14 @@ public class Predictor {
         return true;
     }
 
+    @JavascriptInterface
     public void release() {
         if (this.mPaddlePredictorNative != null) {
             this.mPaddlePredictorNative.destroy();
             this.mPaddlePredictorNative = null;
         }
 
-        this.modelLoaded = false;
+        this.isLoaded = false;
     }
 
     public void releaseModel() {
@@ -163,7 +181,7 @@ public class Predictor {
             paddlePredictor.destroy();
             paddlePredictor = null;
         }
-        modelLoaded = false;
+        isLoaded = false;
         cpuThreadNum = 4;
         cpuPowerMode = "LITE_POWER_HIGH";
         modelPath = "";
@@ -194,7 +212,7 @@ public class Predictor {
     }
 
     public boolean modelLoaded() {
-        return this.mPaddlePredictorNative != null && this.modelLoaded;
+        return this.mPaddlePredictorNative != null && this.isLoaded;
     }
 
     public String modelPath() {
@@ -336,7 +354,7 @@ public class Predictor {
     }
 
     public boolean isLoaded() {
-        return paddlePredictor != null && modelLoaded;
+        return paddlePredictor != null && isLoaded;
     }
 
     private void drawResults(ArrayList<OcrResultModel> results) {
@@ -379,26 +397,36 @@ public class Predictor {
         }
     }
 
+    @JavascriptInterface
     public void initOcr(Context appCtx, int cpuThreadNum, boolean useSlim) {
-        loadLabel(appCtx, "labels/ppocr_keys_v1.txt");
-        if (!this.modelLoaded || (this.useSlim != useSlim)) {
+        this.loadLabel(appCtx, "labels/ppocr_keys_v1.txt");
+        if (!this.isLoaded() || this.useSlim != useSlim) {
             if (useSlim) {
-                // WebView中开多进程会导致UI崩溃
-                // "Using WebView from more than one process at once with the same data directory is not supported. https://crbug.com/558377 : Current process...“
-//                if (Looper.getMainLooper() == Looper.myLooper()) {
-//                    new Thread(() -> {
-//                        loadModel(appCtx, "models/ocr_v2_for_cpu(slim)", 1, "LITE_POWER_HIGH");
-//                    }).start();
-//                } else {
-//                    loadModel(appCtx, "models/ocr_v2_for_cpu(slim)", 1, "LITE_POWER_HIGH");
-//                }
-                loadModel(appCtx, "models/ocr_v2_for_cpu(slim)", cpuThreadNum, "LITE_POWER_HIGH");
+                this.loadModel(appCtx, "models/ocr_v2_for_cpu(slim)", cpuThreadNum, "LITE_POWER_HIGH");
             } else {
-                loadModel(appCtx, "models/ocr_v2_for_cpu", cpuThreadNum, "LITE_POWER_HIGH");
+                this.loadModel(appCtx, "models/ocr_v2_for_cpu", cpuThreadNum, "LITE_POWER_HIGH");
             }
         }
+
         this.useSlim = useSlim;
         Log.i(TAG, "initSuccess: " + this.initSuccess);
+    }
+
+    @JavascriptInterface
+    public Boolean initOcr(Context appCtx, int cpuThreadNum, String myModelPath) {
+        int retryTime;
+        for(retryTime = 0; retryTime < 3 && (!this.isLoaded || !this.checkInitSuccess()); ++retryTime) {
+            Utils.copyDirectoryFromAssets(appCtx, "models/ocr_v2_for_cpu(slim)", appCtx.getExternalFilesDir((String)null).getParent() + File.separator + "models/ocr_v2_for_cpu");
+            this.loadLabel(appCtx, "labels/ppocr_keys_v1.txt");
+            if (!this.isLoaded()) {
+                this.loadModel(appCtx, myModelPath, cpuThreadNum, "LITE_POWER_HIGH");
+            }
+
+            this.isLoaded = true;
+        }
+
+        Log.i(TAG, "第" + retryTime + "次初始化校验是否成功: " + this.initSuccess);
+        return this.initSuccess;
     }
 
 //    public synchronized List<OcrResult> runOcr(Bitmap inputImage0, int cpuThreadNum) {
@@ -455,6 +483,7 @@ public class Predictor {
         return words_result;
     }
 
+    @JavascriptInterface
     public boolean checkInitSuccess() {
         if (this.initSuccess) return true;
         String CHECK_IMG_BASE64 =
@@ -475,6 +504,7 @@ public class Predictor {
         return this.initSuccess || retryTime++ >= 5;
     }
 
+    @JavascriptInterface
     public List<OcrResult> runOcr(Bitmap inputImage, int cpuThreadNum, boolean useSlim) {
         ArrayList<OcrResultModel> resultList;
         this.cpuThreadNum = cpuThreadNum;

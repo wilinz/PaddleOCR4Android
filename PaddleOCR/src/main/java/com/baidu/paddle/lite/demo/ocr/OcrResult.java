@@ -1,4 +1,4 @@
-package cn.android.ocr;
+package com.baidu.paddle.lite.demo.ocr;
 
 import android.graphics.Rect;
 

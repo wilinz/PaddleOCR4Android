@@ -11,8 +11,6 @@ import androidx.appcompat.app.ActionBar;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.android.ocr.Utils;
-
 
 public class SettingsActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     ListPreference lpChoosePreInstalledModel = null;
