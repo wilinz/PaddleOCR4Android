@@ -3,4 +3,4 @@
 cache/
 .cxx/
 .cxx
-OpenCV-android-sdk
+/PaddleOCR/OpenCV-android-sdk/
