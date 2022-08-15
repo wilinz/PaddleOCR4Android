@@ -82,7 +82,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity implements Sha
         cbEnableCustomSettings =
                 (CheckBoxPreference) findPreference(getString(R.string.ENABLE_CUSTOM_SETTINGS_KEY));
         etModelPath = (EditTextPreference) findPreference(getString(R.string.MODEL_PATH_KEY));
-        etModelPath.setTitle("Model Path (SDCard: " + Utils.getSDCardDirectory() + ")");
+        etModelPath.setTitle("Model Path (SDCard: " + Utils.INSTANCE.getSDCardDirectory() + ")");
         etLabelPath = (EditTextPreference) findPreference(getString(R.string.LABEL_PATH_KEY));
         etImagePath = (ListPreference) findPreference(getString(R.string.IMAGE_PATH_KEY));
         lpCPUThreadNum =
