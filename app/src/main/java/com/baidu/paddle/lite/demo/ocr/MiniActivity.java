@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.android.ocr.Predictor;
 
 public class MiniActivity extends AppCompatActivity {
 
@@ -147,8 +146,8 @@ public class MiniActivity extends AppCompatActivity {
 
     private void onRunModelSuccessed() {
         Log.i(TAG, "onRunModelSuccessed");
-        textView.setText(predictor.outputResult());
-        imageView.setImageBitmap(predictor.outputImage());
+        textView.setText(predictor.getOutputResult());
+        imageView.setImageBitmap(predictor.getOutputImage());
     }
 
     private void onUnloadModel() {
