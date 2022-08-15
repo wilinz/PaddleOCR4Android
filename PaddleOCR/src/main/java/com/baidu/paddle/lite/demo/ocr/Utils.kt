@@ -55,6 +55,7 @@ object Utils {
         }
     }
 
+    @JvmStatic
     fun parseFloatsFromString(string: String, delimiter: String?): FloatArray {
         val pieces = string.trim { it <= ' ' }.lowercase(Locale.getDefault()).split(
             delimiter!!
@@ -66,6 +67,7 @@ object Utils {
         return floats
     }
 
+    @JvmStatic
     fun parseLongsFromString(string: String, delimiter: String?): LongArray {
         val pieces = string.trim { it <= ' ' }.lowercase(Locale.getDefault()).split(
             delimiter!!

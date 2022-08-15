@@ -3,4 +3,6 @@
 cache/
 .cxx/
 .cxx
-/PaddleOCR/OpenCV-android-sdk/
+PaddleOCR/OpenCV-android-sdk
+*.cpp
+*.hpp

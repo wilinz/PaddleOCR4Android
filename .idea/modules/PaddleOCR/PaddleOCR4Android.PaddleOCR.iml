@@ -39,6 +39,11 @@
     <content url="file://$MODULE_DIR$/../../../PaddleOCR">
       <excludeFolder url="file://$MODULE_DIR$/../../../PaddleOCR/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../../PaddleOCR/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../PaddleOCR/OpenCV-android-sdk/sdk/java/javadoc/org" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../PaddleOCR/OpenCV-android-sdk/sdk/java/javadoc/org/opencv" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../PaddleOCR/OpenCV-android-sdk/sdk/java/src" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../PaddleOCR/OpenCV-android-sdk/sdk/java/src/org/opencv" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../PaddleOCR/.cxx" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
