@@ -1,8 +1,5 @@
 /build
 .gradle
 cache/
-.cxx/
 .cxx
-PaddleOCR/OpenCV-android-sdk
-*.cpp
-*.hpp
+/PaddleOCR/OpenCV-android-sdk
